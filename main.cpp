@@ -4,7 +4,9 @@
 // ショットの最大数
 #define MAX_SHOT	4
 
-int PlayerX, PlayerY;	// プレイヤーの位置
+int PlayerX, PlayerY, PlayerSize;	// プレイヤーの位置
+int MapX, MapY, MapW, MapH; // マップの位置
+int AreaX, AreaY, AreaW, AreaH; // エリアの位置
 
 int ShotValid[MAX_SHOT];	// ショットが存在するか、フラグ
 int ShotX[MAX_SHOT], ShotY[MAX_SHOT];	// ショットの位置
@@ -25,9 +27,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// 描画先画面を裏画面にセット
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	// プレイヤーの初期位置をセット
+	// プレイヤーの初期値
 	PlayerX = 320;
 	PlayerY = 400;
+	PlayerSize = 10;
+
+	// マップの初期値
+	MapX = 0;
+	MapY = 0;
+	MapW = 640;
+	MapH = 300;
+
+	// エリアの初期値
+	AreaX = 200;
+	AreaY = 250;
+	AreaW = 200;
+	AreaH = 200;
+
 
 	// ショットの存在を初期化する
 	for (i = 0; i < MAX_SHOT; i++)
@@ -83,8 +99,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// 画面を初期化する
 		ClearDrawScreen();
 
+		// マップを描画
+		DrawBox(MapX, MapY, MapX + MapW, MapY + MapH, GetColor(255, 255, 255), FALSE);
+
+		// エリアを描画
+		DrawBox(AreaX, AreaY, AreaX + AreaW, AreaY + AreaH, GetColor(255, 255, 255), TRUE);
+
 		// プレイヤーを描画する
-		DrawBox(PlayerX, PlayerY, PlayerX + 48, PlayerY + 48, GetColor(255, 0, 0), TRUE);
+		DrawCircle(PlayerX, PlayerY, PlayerSize, GetColor(255, 0, 0), TRUE);
+		// DrawBox(PlayerX, PlayerY, PlayerX + 48, PlayerY + 48, GetColor(255, 0, 0), TRUE);
 
 		// ショットを描画する
 		for (j = 0; j < MAX_SHOT; j++)
