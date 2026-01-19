@@ -4,9 +4,11 @@
 // ショットの最大数
 #define MAX_SHOT	4
 
-int PlayerX, PlayerY, PlayerSize;	// プレイヤーの位置
 int MapX, MapY, MapW, MapH; // マップの位置
+int MapPlayerX, MapPlayerY, MapPlayerSize;	// プレイヤーの位置
+
 int AreaX, AreaY, AreaW, AreaH; // エリアの位置
+int AreaPlayerX, AreaPlayerY, AreaPlayerSize;	// プレイヤーの位置
 
 int ShotValid[MAX_SHOT];	// ショットが存在するか、フラグ
 int ShotX[MAX_SHOT], ShotY[MAX_SHOT];	// ショットの位置
@@ -27,22 +29,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// 描画先画面を裏画面にセット
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	// プレイヤーの初期値
-	PlayerX = 320;
-	PlayerY = 400;
-	PlayerSize = 10;
-
 	// マップの初期値
 	MapX = 0;
 	MapY = 0;
 	MapW = 640;
 	MapH = 300;
 
+	// プレイヤーの初期値
+	MapPlayerX = 200;
+	MapPlayerY = 100;
+	MapPlayerSize = 5;
+
 	// エリアの初期値
 	AreaX = 200;
 	AreaY = 250;
 	AreaW = 200;
 	AreaH = 200;
+
+	// プレイヤーの初期値
+	AreaPlayerX = 320;
+	AreaPlayerY = 400;
+	AreaPlayerSize = 10;
 
 
 	// ショットの存在を初期化する
@@ -56,11 +63,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		OldKey = Key;
 		Key = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 
-		if (Key & PAD_INPUT_RIGHT) PlayerX += 3;	// 右を押していたら右に進む
-		if (Key & PAD_INPUT_LEFT) PlayerX -= 3;	// 左を押していたら左に進む
-		if (Key & PAD_INPUT_DOWN) PlayerY += 3;	// 右を押していたら右に進む
-		if (Key & PAD_INPUT_UP) PlayerY -= 3;	// 左を押していたら左に進む
-
+		if (Key & PAD_INPUT_RIGHT) {
+			// 右を押していたら右に進む
+			if (AreaPlayerX < AreaX + AreaW) {
+				AreaPlayerX += 3;
+			}
+			MapPlayerX += 1;
+		}
+		if (Key & PAD_INPUT_LEFT) {
+			// 左を押していたら左に進む
+			if (AreaPlayerX > AreaX) {
+				AreaPlayerX -= 3;
+			}
+			MapPlayerX -= 1;
+		}
+		if (Key & PAD_INPUT_DOWN) {
+			// 右を押していたら右に進む
+			if (AreaPlayerY < AreaY + AreaH) {
+				AreaPlayerY += 3;
+			}
+			MapPlayerY += 1;
+		}
+		if (Key & PAD_INPUT_UP) {
+			// 左を押していたら左に進む
+			if (AreaPlayerY > AreaY) {
+				AreaPlayerY -= 3;
+			}
+			MapPlayerY -= 1;
+		}
 		// ショットの移動処理
 		for (j = 0; j < MAX_SHOT; j++)
 		{
@@ -88,8 +118,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			if (j != MAX_SHOT)
 			{
 				// ショットの位置を設定
-				ShotX[j] = PlayerX + 16;
-				ShotY[j] = PlayerY;
+				ShotX[j] = AreaPlayerX + 16;
+				ShotY[j] = AreaPlayerY;
 
 				// ショットデータを使用中にセット
 				ShotValid[j] = 1;
@@ -102,11 +132,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// マップを描画
 		DrawBox(MapX, MapY, MapX + MapW, MapY + MapH, GetColor(255, 255, 255), FALSE);
 
+		// マップのプレイヤーを描画する
+		DrawCircle(MapPlayerX, MapPlayerY, MapPlayerSize, GetColor(255, 0, 0), TRUE);
+
+
 		// エリアを描画
 		DrawBox(AreaX, AreaY, AreaX + AreaW, AreaY + AreaH, GetColor(255, 255, 255), TRUE);
 
-		// プレイヤーを描画する
-		DrawCircle(PlayerX, PlayerY, PlayerSize, GetColor(255, 0, 0), TRUE);
+		// エリアのプレイヤーを描画する
+		DrawCircle(AreaPlayerX, AreaPlayerY, AreaPlayerSize, GetColor(255, 0, 0), TRUE);
 		// DrawBox(PlayerX, PlayerY, PlayerX + 48, PlayerY + 48, GetColor(255, 0, 0), TRUE);
 
 		// ショットを描画する
